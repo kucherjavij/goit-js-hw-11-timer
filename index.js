@@ -1,62 +1,48 @@
 
-const refs = {
-days:document.querySelector('[data-value="days"]'),
-hours: document.querySelector('[data-value="hours"]'),
-mins: document.querySelector('[data-value="mins"]'),
-    secs: document.querySelector('[data-value="secs"]'),
-timer:document.querySelector('#timer-1')
-}
-// new CountdownTimer({
-//     selector: '#timer-1',
-//     targetDate: new Date('Jul 17, 2019'),
-// });
-
 class CountdownTimer {
-    constructor({ update }) {
-        this.update = update;
+    constructor({ selector, targetDate }) {
+        this.refs = {
+            daysEL:document.querySelector(`${selector} [data-value="days"]`),
+            hoursEL: document.querySelector(`${selector} [data-value="hours"]`),
+            minsEL: document.querySelector(`${selector} [data-value="mins"]`),
+                secsEL: document.querySelector(`${selector} [data-value="secs"]`),
+            
+            }  
+            this.start(targetDate)
     }
-
-    start() {
-        const startTime = Date.now();
+    pad(value) {
+        return String(value).padStart(2, '0')
+    }
+    
+    getTimeComponents(time) {
+        const days = this.pad(Math.floor(time / (1000 * 60 * 60 * 24)))
+        const hours = this.pad(Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)))
+        const mins = this.pad(Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)))
+        const secs = this.pad(Math.floor((time % (1000 * 60)) / 1000))
+        return {days,hours,mins,secs}
+    }
+    updateTimer({ days, hours, mins, secs }) {
+        this.refs.daysEL.textContent = `${days}`
+        this.refs.hoursEL.textContent = `${hours}`
+        this.refs.minsEL.textContent = `${mins}`
+        this.refs.secsEL.textContent = `${secs}`
+    }
+    start(targetDate) {
         setInterval(() => {
-            const currentTime = Date.now()
-            const delta = this.targetDate - startTime;
-            const timeComponents = this.getTimeComponents(delta);
-            console.log(timeComponents)
-
-            this.update(timeComponents)
+            this.updateTimer(this.getTimeComponents(targetDate - Date.now()))
         }, 1000);
     }
-    getTimeComponents(time) {
-    
-        const days = this.pad(Math.floor(time / (1000 * 60 * 60 * 24)));
-    const hours = this.pad(Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
-        const mins = this.pad(Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)));
-        const secs = this.pad(Math.floor((time % (1000 * 60)) / 1000));
-        return {
-            
-            days,
-            hours,
-            mins,
-            secs
-          };
-    }
 
-    pad(val) {
-        return String(val).padStart(2, '0')
-    }
 }
 
-const timer2 = new CountdownTimer({
-    update: updateTimer,
+new CountdownTimer({
         selector: '#timer-1',
-        targetDate: new Date('December 24 2021'),
+        targetDate: new Date('Dec 24, 2021'),
     });
 
 
 
-function t()  { CountdownTimer.start() }
-function updateTimer({ days, hours, mins, secs }) {
-    refs.timer.textContent = `${days}:${hours}:${mins}:${secs}`
-}
-console.log(updateTimer)
+
+
+
+
